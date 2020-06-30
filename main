@@ -1,0 +1,226 @@
+#include "stdafx.h"
+#include<iostream>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/opencv.hpp>
+
+using namespace std;
+using namespace cv;
+
+void Menu(){
+
+}
+Mat Rotate(Mat img) {
+	bool choice = 1;
+	rotate(img, img, ROTATE_90_CLOCKWISE);
+	namedWindow("image", WINDOW_NORMAL);
+	imshow("image", img);
+	waitKey(); //wait for any key press
+	while (choice)
+	{
+	
+	cout << "Rotate again?(Yes(1) /  No(0) ";
+	cin >> choice;
+		if (choice)
+		{
+			img = Rotate(img);
+		}
+		if (!choice) 
+		{
+			break;
+		}
+	}
+	
+	return img;
+}
+
+
+Mat Sketch(Mat img) {
+	Mat greyimg;
+	Mat blurimg;
+	Mat invertimg;
+	Mat finalimg;
+	cvtColor(img, greyimg, COLOR_BGR2GRAY); //greyscale
+
+											//bitwise_not(greyimg, invertimg); //invert
+	invertimg = 255 - greyimg;
+	blur(invertimg,blurimg,Size(21,21),Point(-10,-10));
+	GaussianBlur(invertimg, blurimg, Size(21, 21), 0); //blur
+	 //finalimg = (blurimg * 255) / (255 - greyimg);
+
+	divide(greyimg, 255 - blurimg, finalimg, 255);
+
+	namedWindow("image", WINDOW_NORMAL);
+	imshow("image", finalimg);
+	waitKey(); //wait for any key press
+
+	return img;
+
+}
+
+
+Mat Mirror(Mat img){
+	flip(img, img, +1);
+	namedWindow("image", WINDOW_NORMAL);
+	imshow("image", img);
+	waitKey(); //wait for any key press
+	return img;
+}
+
+
+Mat Deepfry(Mat img) {
+
+	GaussianBlur(img,img, Size(21, 21), 0); //blur
+	double alpha = 2.0; //1.0 - 3.0
+	int beta = 20; //0-100
+	cout << "Enter Beta and Alpha values please:\nBeta(0-100):";
+	cin >> beta;
+	cout << "\nAlpha(1.0 - 3.0): ";
+	cin >> alpha;
+	
+
+	for (int r = 0; r < img.rows; r++) {
+		for (int c = 0; c < img.cols; c++) {
+			for (int y = 0; y < img.channels(); y++) {
+				img.at<Vec3b>(r,c)[y] =
+					saturate_cast<uchar>(alpha*img.at<Vec3b>(r,c)[y] + beta);
+			}
+		}
+	}
+	cvtColor(img, img, COLOR_HSV2BGR_FULL);
+	
+	namedWindow("image", WINDOW_NORMAL);
+	imshow("image", img);
+	waitKey(); //wait for any key press
+	return img;
+
+}
+
+Mat Filter(Mat img) {
+	flip(img, img, +1);
+	namedWindow("image", WINDOW_NORMAL);
+	imshow("image", img);
+	waitKey(); //wait for any key press
+	return img;
+}
+
+int save()
+{
+	int selection;
+
+		cout << "Do you want to edit an image? \n";
+		cout << "YES (1)\nNO(0)\n";
+		cin >> selection;
+
+
+	return selection;
+}
+
+int main()
+{
+	char choice;
+	int type;
+	char file[256];
+
+	string image;
+		cout << "What is the name of the file you wish to edit?: \n";
+		std::cin.getline(file, 256);
+
+		do {
+		cout << "\n What type of file is the image? \n";
+		cout << "Enter the number corresponsding to the type:\n";
+		cout << "(1) JPG \n";
+		cout << "(2) PNG \n";
+		cout << "(3) GIF \n";
+		cout << "(4) BMP \n";
+		cout << "(0) Cancel and Exit \n";
+		cin >> type;
+		switch (type) {
+		case '1':
+			image = string(file) + ".JPG";
+			type = 0;
+			break;
+		case '2':
+			image = string(file) + ".png";
+			type = 0;
+			break;
+		case '3':
+			image = string(file) + ".gif";
+			type = 0;
+			break;
+
+		case '4':
+			image = string(file) + ".bmp";
+			type = 0;
+			break;
+		case '0':
+			return 0;
+			break;
+		default:
+			cout << "Error: input was not identified \n\n";
+			break;
+		}
+
+		} while (type != 0);
+
+
+
+		Mat img = imread(image);
+		if (img.empty())
+		{
+			cout << "Could not open or find the image " << image << endl;
+			cin.get(); //wait for any key press
+			waitKey();
+			return -1;
+		}
+		//add loop here for type, if found continue, else start from beginning
+
+
+		char task;
+		do {
+		cout << "\n What do you want to do with this image? \n";
+		cout << "Enter the number corresponsding to the type:\n";
+		cout << "(1) Rotate it\n";
+		cout << "(2) Sketch it \n";
+		cout << "(3) Mirror it \n";
+		cout << "(4) Deep Fry it \n";
+		cout << "(5) Filter it \n";
+		cout << "(0) Nothing/Exit \n";
+		cin >> task;
+		switch (task) {
+		case '1':
+			Rotate(img);
+			break;
+		case '2':
+			Sketch(img);
+			break;
+		case '3':
+			Mirror(img);
+			break;
+		case '4':
+			Deepfry(img);
+			break;
+		case '5':
+			Filter(img);
+			break;
+		case '0':
+			namedWindow("image", WINDOW_NORMAL);
+			imshow("image", img);
+			waitKey();
+			return -1;
+			break;
+		default:
+			break;
+
+		}
+		} while (task != 0);
+		/*else {
+				namedWindow("image", WINDOW_NORMAL);
+			imshow("image", img);
+			waitKey();
+			return -1;
+		}*/
+	//save();
+	return 0;
+}
