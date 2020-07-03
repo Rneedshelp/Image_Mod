@@ -1,3 +1,5 @@
+// open_test.cpp : Defines the entry point for the console application.
+//
 #include "stdafx.h"
 #include<iostream>
 #include <opencv2/highgui/highgui.hpp>
@@ -105,16 +107,24 @@ Mat Filter(Mat img) {
 	return img;
 }
 
-int save()
+Mat save(Mat img)
 {
 	int selection;
 
-		cout << "Do you want to edit an image? \n";
-		cout << "YES (1)\nNO(0)\n";
-		cin >> selection;
+	cout << "Do you want to edit an image? \n";
+	cout << "YES (1)\nNO(0)\n";
+	cin >> selection;
+	if (selection == 1)
+	{
+
+	}
+	else
+	{
+
+	}
 
 
-	return selection;
+	return img;
 }
 
 int main()
@@ -137,25 +147,24 @@ int main()
 		cout << "(0) Cancel and Exit \n";
 		cin >> type;
 		switch (type) {
-		case '1':
+		case 1:
 			image = string(file) + ".JPG";
 			type = 0;
 			break;
-		case '2':
+		case 2:
 			image = string(file) + ".png";
 			type = 0;
 			break;
-		case '3':
+		case 3:
 			image = string(file) + ".gif";
 			type = 0;
 			break;
 
-		case '4':
+		case 4:
 			image = string(file) + ".bmp";
 			type = 0;
 			break;
-		case '0':
-			return 0;
+		case 0:
 			break;
 		default:
 			cout << "Error: input was not identified \n\n";
@@ -189,22 +198,22 @@ int main()
 		cout << "(0) Nothing/Exit \n";
 		cin >> task;
 		switch (task) {
-		case '1':
-			Rotate(img);
+		case 1:
+			img = Rotate(img);
 			break;
-		case '2':
-			Sketch(img);
+		case 2:
+			img = Sketch(img);
 			break;
-		case '3':
-			Mirror(img);
+		case 3:
+			img = Mirror(img);
 			break;
-		case '4':
-			Deepfry(img);
+		case 4:
+			img = Deepfry(img);
 			break;
-		case '5':
-			Filter(img);
+		case 5:
+			img = Filter(img);
 			break;
-		case '0':
+		case 0:
 			namedWindow("image", WINDOW_NORMAL);
 			imshow("image", img);
 			waitKey();
@@ -221,6 +230,6 @@ int main()
 			waitKey();
 			return -1;
 		}*/
-	//save();
+	//save(img);
 	return 0;
 }
