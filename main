@@ -2,6 +2,8 @@
 //
 #include "stdafx.h"
 #include<iostream>
+#include <string>
+#include <locale>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -13,26 +15,21 @@ using namespace cv;
 void Menu(){
 
 }
+
 Mat Rotate(Mat img) {
-	bool choice = 1;
-	rotate(img, img, ROTATE_90_CLOCKWISE);
+	int incr = 0;
+	cout << "How many times do you want to rotate 90 degrees? ";
+	cin >> incr;
+
+	for(int i = 0; i < incr; i++)
+	{
+		rotate(img, img, 90);
+	}
+	
 	namedWindow("image", WINDOW_NORMAL);
 	imshow("image", img);
-	waitKey(); //wait for any key press
-	while (choice)
-	{
 	
-	cout << "Rotate again?(Yes(1) /  No(0) ";
-	cin >> choice;
-		if (choice)
-		{
-			img = Rotate(img);
-		}
-		if (!choice) 
-		{
-			break;
-		}
-	}
+	waitKey(); //wait for any key press
 	
 	return img;
 }
@@ -56,6 +53,7 @@ Mat Sketch(Mat img) {
 	namedWindow("image", WINDOW_NORMAL);
 	imshow("image", finalimg);
 	waitKey(); //wait for any key press
+	//imwrite("G14.jpg", img);
 
 	return img;
 
@@ -198,28 +196,29 @@ int main()
 		cout << "(0) Nothing/Exit \n";
 		cin >> task;
 		switch (task) {
-		case 1:
-			img = Rotate(img);
+		case '1':
+			Rotate(img);
 			break;
-		case 2:
-			img = Sketch(img);
+		case '2':
+			Sketch(img);
 			break;
-		case 3:
-			img = Mirror(img);
+		case '3':
+			Mirror(img);
 			break;
-		case 4:
-			img = Deepfry(img);
+		case '4':
+			Deepfry(img);
 			break;
-		case 5:
-			img = Filter(img);
+		case '5':
+			Filter(img);
 			break;
-		case 0:
+		case '0':
 			namedWindow("image", WINDOW_NORMAL);
 			imshow("image", img);
 			waitKey();
 			return -1;
 			break;
 		default:
+			cout << "Could not register the input! Try Again \n";
 			break;
 
 		}
@@ -230,6 +229,6 @@ int main()
 			waitKey();
 			return -1;
 		}*/
-	//save(img);
+	//save();
 	return 0;
 }
