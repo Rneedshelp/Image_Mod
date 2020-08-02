@@ -21,10 +21,11 @@ Mat Rotate(Mat img) {
 	cout << "By how many degrees do you want image rotated? ";
 	cin >> degree;
 
-	Point2f center((img.cols) / 2.0, (img.rows) / 2.0);
+	Point2f center(float((img.cols) / 2.0), float((img.rows) / 2.0));
 	Mat rot = getRotationMatrix2D(center, degree, 1.0);
 	cv::warpAffine(img, img, rot, img.size());
 	namedWindow("Rotated_image", WINDOW_NORMAL);
+	resizeWindow("image", img.size());
 	imshow("image", img);
 
 
@@ -39,22 +40,49 @@ Mat Sketch(Mat img) {
 	Mat blurimg;
 	Mat invertimg;
 	Mat finalimg;
-	cvtColor(img, greyimg, COLOR_RGB2GRAY); //greyscale
 
-											//bitwise_not(greyimg, invertimg); //invert
+
+	cvtColor(img, greyimg, COLOR_BGR2GRAY);
+
+	//invert
 	invertimg = 255 - greyimg;
-	//blur(invertimg,blurimg,Size(21,21),Point(-10,-10));
-	GaussianBlur(invertimg, blurimg, Size(21, 21), 0); //blur
-	finalimg = (blurimg * 255) / (255 - greyimg);
-	divide(greyimg, 255 - blurimg, finalimg, 255);
-	cvtColor(img, img, COLOR_BGR2GRAY);
 
-	//cvtColor(finalimg,img,COLOR_BGR2GRAY);
+	//blur
+	GaussianBlur(invertimg, invertimg, Size(21, 21), 0);
+
+	//dodge
+	divide(greyimg, 255 - invertimg, finalimg, 256.0);
+
+
 
 	namedWindow("image", WINDOW_NORMAL);
-	imshow("image", finalimg);
-	waitKey(); //wait for any key press
+	namedWindow("sketch", WINDOW_NORMAL);
+
+	imshow("image", img);
+	imshow("sketch", finalimg);
+
+	waitKey(0);
+
+
+	/*
+	cvtColor(img, greyimg, COLOR_RGB2GRAY); //greyscale
+	invertimg = 255 - greyimg;
+	blur(invertimg,blurimg,Size(21,21),Point(-10,-10));
+	finalimg = (blurimg * 255) / (255 - greyimg);
+
+  	divide(blurimg, 255 - greyimg, finalimg, 255);
+ 
+	pencilSketch(img,greyimg,finalimg, 60.0, 0.07,0.05);
+	stylization(finalimg, finalimg, 60, 0.7);
+	cvtColor(finalimg,finalimg, COLOR_RGB2GRAY); //greyscale
+
+	*/
+
+	//namedWindow("image", WINDOW_NORMAL);
+	//imshow("image", finalimg);
+	//waitKey(); //wait for any key press
 	//imwrite("G14.jpg", img);
+
 
 	return img;
 
@@ -75,6 +103,9 @@ Mat Deepfry(Mat img) {
 	GaussianBlur(img,img, Size(21, 21), 0); //blur
 	double alpha = 2.0; //1.0 - 3.0
 	int beta = 20; //0-100
+	GaussianBlur(img, img, cv::Size(0, 0), 3);
+	cv::addWeighted(img, 3, img, -0.5, 0, img);
+
 	cout << "Enter Beta and Alpha values please:\nBeta(0-100):";
 	cin >> beta;
 	cout << "\nAlpha(1.0 - 3.0): ";
@@ -89,7 +120,9 @@ Mat Deepfry(Mat img) {
 			}
 		}
 	}
-	cvtColor(img, img, COLORMAP_HOT);
+
+	cvtColor(img, img, COLOR_RGB2HSV_FULL);
+
 	
 	namedWindow("image", WINDOW_NORMAL);
 	imshow("image", img);
@@ -158,7 +191,6 @@ int main()
 			image = string(file) + ".gif";
 			type = 0;
 			break;
-
 		case 4:
 			image = string(file) + ".bmp";
 			type = 0;
@@ -213,8 +245,6 @@ int main()
 			Filter(img);
 			break;
 		case '0':
-			namedWindow("image", WINDOW_NORMAL);
-			imshow("image", img);
 			waitKey();
 			return -1;
 			break;
