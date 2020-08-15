@@ -48,10 +48,11 @@ Mat Sketch(Mat img) {
 	invertimg = 255 - greyimg;
 
 	//blur
-	GaussianBlur(invertimg, invertimg, Size(21, 21), 0);
+	GaussianBlur(invertimg, blurimg, Size(21, 21), 0);
 
-	//dodge
-	divide(greyimg, 255 - invertimg, finalimg, 256.0);
+	//
+	finalimg = (blurimg * 255) / (255 - greyimg);
+	divide(greyimg, 255 - blurimg, finalimg, 256.0);
 
 
 
@@ -63,38 +64,18 @@ Mat Sketch(Mat img) {
 
 	waitKey(0);
 
-
-	/*
-	cvtColor(img, greyimg, COLOR_RGB2GRAY); //greyscale
-	invertimg = 255 - greyimg;
-	blur(invertimg,blurimg,Size(21,21),Point(-10,-10));
-	finalimg = (blurimg * 255) / (255 - greyimg);
-
-  	divide(blurimg, 255 - greyimg, finalimg, 255);
- 
-	pencilSketch(img,greyimg,finalimg, 60.0, 0.07,0.05);
-	stylization(finalimg, finalimg, 60, 0.7);
-	cvtColor(finalimg,finalimg, COLOR_RGB2GRAY); //greyscale
-
-	*/
-
-	//namedWindow("image", WINDOW_NORMAL);
-	//imshow("image", finalimg);
-	//waitKey(); //wait for any key press
-	//imwrite("G14.jpg", img);
-
-
-	return img;
+	return finalimg;
 
 }
 
 
 Mat Mirror(Mat img){
-	flip(img, img, +1);
+	Mat finalimg;
+	flip(img, finalimg, +1);
 	namedWindow("image", WINDOW_NORMAL);
-	imshow("image", img);
+	imshow("image", finalimg);
 	waitKey(); //wait for any key press
-	return img;
+	return finalimg;
 }
 
 
@@ -164,7 +145,7 @@ int main()
 	char choice;
 	int type;
 	char file[256];
-
+	Mat newimg;
 	string image;
 		cout << "What is the name of the file you wish to edit?: \n";
 		std::cin.getline(file, 256);
@@ -219,6 +200,7 @@ int main()
 
 		char task;
 		do {
+	
 		cout << "\n What do you want to do with this image? \n";
 		cout << "Enter the number corresponsding to the type:\n";
 		cout << "(1) Rotate it\n";
@@ -230,19 +212,19 @@ int main()
 		cin >> task;
 		switch (task) {
 		case '1':
-			Rotate(img);
+			newimg = Rotate(img);
 			break;
 		case '2':
-			Sketch(img);
+			newimg = Sketch(img);
 			break;
 		case '3':
-			Mirror(img);
+			newimg = Mirror(img);
 			break;
 		case '4':
-			Deepfry(img);
+			newimg = Deepfry(img);
 			break;
 		case '5':
-			Filter(img);
+			newimg = Filter(img);
 			break;
 		case '0':
 			waitKey();
@@ -252,14 +234,10 @@ int main()
 			cout << "Could not register the input! Try Again \n";
 			break;
 
+
 		}
 		} while (task != 0);
-		/*else {
-				namedWindow("image", WINDOW_NORMAL);
-			imshow("image", img);
-			waitKey();
-			return -1;
-		}*/
-	//save();
+	
+	//save(newimg);
 	return 0;
 }
