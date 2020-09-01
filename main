@@ -112,14 +112,6 @@ Mat Deepfry(Mat img) {
 
 }
 
-Mat Filter(Mat img) {
-	flip(img, img, +1);
-	namedWindow("image", WINDOW_NORMAL);
-	imshow("image", img);
-	waitKey(); //wait for any key press
-	return img;
-}
-
 Mat save(Mat img)
 {
 	int selection;
@@ -207,7 +199,6 @@ int main()
 		cout << "(2) Sketch it \n";
 		cout << "(3) Mirror it \n";
 		cout << "(4) Deep Fry it \n";
-		cout << "(5) Filter it \n";
 		cout << "(0) Nothing/Exit \n";
 		cin >> task;
 		switch (task) {
@@ -218,13 +209,10 @@ int main()
 			newimg = Sketch(img);
 			break;
 		case '3':
-			newimg = Mirror(img);
+			img = Mirror(img);
 			break;
 		case '4':
 			newimg = Deepfry(img);
-			break;
-		case '5':
-			newimg = Filter(img);
 			break;
 		case '0':
 			waitKey();
